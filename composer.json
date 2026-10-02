@@ -1,0 +1,44 @@
+{
+  "name": "conductor/clicktap-platform-support",
+  "version": "1.0.0",
+  "description": "Conductor Clicktap Platform Support",
+  "type": "library",
+  "homepage": "https://github.com/conductorphp/conductor-clicktap-platform-support",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Kirk Madera",
+      "email": "kirk.madera@rmgmedia.com",
+      "role": "Architect"
+    }
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.4.1|~8.5.0",
+    "conductor/application-orchestration": "^4.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^13.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ConductorClicktapPlatformSupport\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ConductorClicktapPlatformSupportTest\\": "test/"
+    }
+  },
+  "extra": {
+    "laminas": {
+      "config-provider": "ConductorClicktapPlatformSupport\\ConfigProvider"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --colors=always",
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+  }
+}
