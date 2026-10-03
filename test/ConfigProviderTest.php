@@ -74,11 +74,11 @@ class ConfigProviderTest extends TestCase
         $this->assertSame($expected, $this->snapshotConfig->expandDatabaseTableGroups(['@core']));
     }
 
-    /** No table is excluded for two reasons, so groups compose without repeating a pattern. */
-    public function testEachTablePatternIsInExactlyOneGroup(): void
+    /** The 1.0 purpose groups, deprecated by CTAP-2161, do not overlap, and make up @core. */
+    public function testThePurposeGroupsPartitionCore(): void
     {
-        $all = [];
-        foreach (['customers', 'sales', 'payment', 'admin', 'auth', 'logs', 'environment'] as $group) {
+        $all = ['maintenance_mode_whitelist'];
+        foreach (['customers', 'sales', 'payment', 'admin', 'auth', 'logs'] as $group) {
             $tables = $this->snapshotConfig->expandDatabaseTableGroups(['@' . $group]);
             $this->assertNotEmpty($tables, "Group \"$group\" is empty.");
             $this->assertSame([], array_values(array_intersect($all, $tables)), "Group \"$group\" repeats a pattern.");
@@ -117,5 +117,46 @@ class ConfigProviderTest extends TestCase
         ] as $table) {
             $this->assertFalse($excluded($table), "$table should be kept.");
         }
+    }
+
+    /** CTAP-2161: moving a plan from @core to the nature groups leaves out at least what @core did. */
+    public function testTheNatureGroupsCoverCore(): void
+    {
+        $natures = ['@generated', '@cache', '@scratch', '@personal_data', '@environment'];
+
+        $this->assertSame([], array_values(array_diff(
+            $this->snapshotConfig->expandDatabaseTableGroups(['@core']),
+            $this->snapshotConfig->expandDatabaseTableGroups($natures)
+        )));
+        $this->assertSame([], array_values(array_diff(
+            $this->snapshotConfig->expandAssetGroups(['@core']),
+            $this->snapshotConfig->expandAssetGroups($natures)
+        )));
+    }
+
+    public function testNatureGroupsHoldWhatTheirNameSays(): void
+    {
+        $tables = fn(string $group): array => $this->snapshotConfig->expandDatabaseTableGroups(["@$group"]);
+
+        $this->assertContains('rate_limit_counter', $tables('scratch'));
+        $this->assertContains('scheduler_job_run', $tables('scratch'));
+        foreach (['user', 'order*', 'payment_method_*_saved_card_billing_address', 'otp'] as $pattern) {
+            $this->assertContains($pattern, $tables('personal_data'));
+        }
+        foreach (['authentication_*_access_token', 'payment_method_*_user', 'maintenance_mode_whitelist'] as $pattern) {
+            $this->assertContains($pattern, $tables('environment'));
+        }
+        // Left out until each environment seeds its own integration clients
+        $this->assertNotContains('integration_client', $tables('environment'));
+        $this->assertSame(['/sitemap-*.xml', '/sitemap.xml'], $this->snapshotConfig->expandAssetGroups(['@generated']));
+    }
+
+    public function testCoreAndThePurposeGroupsAreDeprecated(): void
+    {
+        $this->assertSame(['core', 'customer_uploads'], array_keys($this->snapshotConfig->deprecatedAssetGroups));
+        $this->assertSame(
+            ['core', 'customers', 'sales', 'payment', 'admin', 'auth', 'logs'],
+            array_keys($this->snapshotConfig->deprecatedDatabaseTableGroups)
+        );
     }
 }
