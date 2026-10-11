@@ -1,6 +1,6 @@
 {
   "name": "conductor/clicktap-platform-support",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Conductor Clicktap Platform Support",
   "type": "library",
   "homepage": "https://github.com/conductorphp/conductor-clicktap-platform-support",
@@ -17,7 +17,7 @@
   },
   "require": {
     "php": "~8.4.1|~8.5.0",
-    "conductor/application-orchestration": "^4.0"
+    "conductor/application-orchestration": "^4.0 || ^5.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^13.0"

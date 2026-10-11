@@ -1,3 +1,10 @@
+[1.1.1](https://github.com/conductorphp/conductor-clicktap-platform-support/compare/1.1.0...1.1.1) (2026-10-11)
+
+### Bug Fixes
+* application-orchestration ^5.0 (CTAP-1757) ([c993596](https://github.com/conductorphp/conductor-clicktap-platform-support/commit/c993596d10615192878213c3b01bae530fcb4f8d))
+
+<!--- CHANGELOG SPLIT MARKER -->
+
 [1.1.0](https://github.com/conductorphp/conductor-clicktap-platform-support/compare/1.0.0...1.1.0) (2026-10-03)
 
 ### Features
