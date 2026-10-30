@@ -1,3 +1,11 @@
+[1.1.2](https://github.com/conductorphp/conductor-clicktap-platform-support/compare/1.1.1...1.1.2) (2026-10-30)
+
+### Bug Fixes
+* nature groups cover every clicktap module table the data-class audit reported (CTAP-3037) ([025dd15](https://github.com/conductorphp/conductor-clicktap-platform-support/commit/025dd15bcb0f484298e1b1673832cd665592efc4))
+* @personal_data excludes the permission snapshots and preferred payment methods (CTAP-3037) ([f091055](https://github.com/conductorphp/conductor-clicktap-platform-support/commit/f091055921bdcf055bb4b70562fd2ea826439d9f))
+
+<!--- CHANGELOG SPLIT MARKER -->
+
 [1.1.1](https://github.com/conductorphp/conductor-clicktap-platform-support/compare/1.1.0...1.1.1) (2026-10-11)
 
 ### Bug Fixes

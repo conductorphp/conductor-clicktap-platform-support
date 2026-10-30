@@ -1,6 +1,6 @@
 {
   "name": "conductor/clicktap-platform-support",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Conductor Clicktap Platform Support",
   "type": "library",
   "homepage": "https://github.com/conductorphp/conductor-clicktap-platform-support",

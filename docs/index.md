@@ -33,17 +33,17 @@ so it can sit in several groups; a plan listing several groups gets each table o
 
 | Group | Assets (`public/assets`, `public/media`) | Tables |
 |---|---|---|
-| `@generated` | `/sitemap.xml`, `/sitemap-*.xml`: rebuilt by the app, and carry the source environment's URLs | Nothing yet |
-| `@cache` | Nothing yet | Nothing yet |
-| `@scratch` | Nothing yet | `integration_run*`, `scheduler_job_run`, `authorization_*_permission_event`, `rate_limit_counter`, `rate_limit_lock` |
-| `@personal_data` | Nothing yet: no module writes customer uploads there | `user`, `user_website`, `admin_user*`, `admin_role_assignment`, `company`, `company_unit`, `company_user`, `address_book*`, `newsletter_subscription`, `product_alert_stock`, `order*`, `quote*`, `historical_quote*`, `checkout_success`, `payment_method_*_saved_card`, `payment_method_*_saved_card_billing_address`, `payment_method_*_user`, `otp`, `authorization_*_permission_event` |
-| `@environment` | Nothing yet | `authentication_*_access_token`, `authentication_*_refresh_token`, `otp`, `admin_user*`, `payment_method_*_saved_card`, `payment_method_*_user`, `maintenance_mode_whitelist` |
+| `@generated` | `/sitemap.xml`, `/sitemap-*.xml`: rebuilt by the app, and carry the source environment's URLs | `authorization_*_permission_snapshot`: rebuilt at sign-in |
+| `@cache` | Nothing yet | `quote_cache`, `quote_cache_entity` |
+| `@scratch` | Nothing yet | `integration_run*`, `scheduler_job_run`, `authorization_*_permission_event`, `rate_limit_counter`, `rate_limit_lock`, `event_log`, `event_log_account`, `event_log_tenant`, `payment_method_stripe_webhook_event`, `catalog_price_rule_dirty_product` |
+| `@personal_data` | `/order/shipment-labels`, `/personalization/uploads`: under the shared root, so only a plan that syncs the whole root reaches them | `user`, `user_website`, `admin_user*`, `admin_role_assignment`, `company`, `company_unit`, `company_user`, `address_book*`, `newsletter_subscription`, `product_alert_stock`, `order*`, `quote*`, `historical_quote*`, `checkout_success`, `payment_method_*_saved_card`, `payment_method_*_saved_card_billing_address`, `payment_method_*_user`, `payment_user_preferred_method`, `otp`, `authorization_*_permission_event`, `authorization_*_permission_snapshot`, `role_assignment`, `account`, `account_credit_balance`, `account_credit_entry`, `account_user_default`, `account_user_membership`, `account_role_assignment`, `account_global_role_assignment`, `company_order`, `company_unit_default`, `company_unit_membership`, `event_log`, `event_log_account`, `event_log_tenant`, `payment_stored_method`, `payment_method_stripe_customer`, `payment_method_stripe_webhook_event`, `personalization_artwork`, `personalization_artwork_correction`, `personalization_configuration`, `subscription`, `subscription_change`, `subscription_charge`, `subscription_event`, `subscription_notice`, `subscription_period` |
+| `@environment` | Nothing yet | `authentication_*_access_token`, `authentication_*_refresh_token`, `otp`, `admin_user*`, `payment_method_*_saved_card`, `payment_method_*_user`, `payment_stored_method`, `payment_method_stripe_customer`, `authentication_admin_session_reauthentication`, `tenant_catalog`, `maintenance_mode_whitelist` |
 
 Asset patterns are rsync-style (a leading `/` anchors at the directory root); table patterns are
 `fnmatch` patterns.
 
-`integration_client` holds credentials and belongs in `@environment`, but is left out until each
-environment seeds its own integration clients: without them, integrations stop authenticating after
+`integration_client`, `integration_client_account_binding` and `integration_role_assignment` belong
+in `@environment`, but are left out until each environment seeds its own integration clients: without them, integrations stop authenticating after
 a restore.
 
 A **scrubbed seed** for lower environments:
@@ -53,6 +53,12 @@ excludes: [ '@generated', '@cache', '@scratch', '@personal_data', '@environment'
 ```
 
 A **media backup** keeps customer files: `excludes: [ '@generated', '@cache', '@scratch' ]`.
+
+Some tables hold source credentials but are kept, because the app breaks without them:
+`payment_method`, `shipping_carrier`, `tax_provider`, `system_setting`,
+`authentication_frontend_provider` and `integration_connector_system_instance`. Each environment
+overrides them in `environment-settings.sql`. `data_patch_applied` and `sequence` must travel with
+the data.
 
 ### Adding your own
 
